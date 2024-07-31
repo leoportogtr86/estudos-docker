@@ -134,10 +134,56 @@ Verifique a conectividade entre os containers na mesma rede e entre diferentes r
 docker exec -it frontend-container ping backend-container
 ```
 
+
+
+### Tabela Comparativa dos Diferentes Tipos de Redes Docker
+
+| Tipo de Rede | Descrição | Casos de Uso | Vantagens | Desvantagens | Comando de Criação |
+|--------------|------------|--------------|-----------|--------------|--------------------|
+| **Bridge**   | Rede padrão que isola containers em uma única máquina. | Comunicação entre containers no mesmo host. | Fácil configuração, boa para ambientes de desenvolvimento. | Não permite comunicação direta com o host ou entre hosts. | `docker network create --driver bridge minha-rede-bridge` |
+| **Host**     | Containers compartilham a pilha de rede do host. | Melhor performance, necessário acesso direto aos recursos de rede do host. | Performance otimizada, sem overhead de virtualização. | Menor isolamento, maior risco de conflitos de porta. | `docker run --network host nginx` |
+| **Overlay**  | Permite comunicação entre containers em diferentes hosts Docker. | Aplicações distribuídas em clusters de Docker Swarm. | Suporte a multi-host, criptografia de tráfego disponível. | Requer configuração de Docker Swarm, maior complexidade. | `docker network create --driver overlay minha-rede-overlay` |
+| **Macvlan**  | Atribui um endereço MAC a cada container, tornando-o visível na rede física. | Aplicações que precisam de um endereço MAC próprio na rede física. | Alta performance, isolamento de rede. | Configuração mais complexa, pode precisar de ajustes na rede física. | `docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 minha-macvlan` |
+| **None**     | Desconecta o container de qualquer rede. | Testes de isolamento, containers que não precisam de rede. | Máximo isolamento de rede. | Sem conectividade de rede. | `docker run --network none nginx` |
+
+### Detalhamento dos Tipos de Redes
+
+#### 1. Rede Bridge
+- **Descrição**: Rede padrão que isola containers em uma única máquina. Containers na mesma rede bridge podem se comunicar diretamente.
+- **Casos de Uso**: Ideal para comunicação entre containers no mesmo host.
+- **Vantagens**: Fácil de configurar e usar, bom para ambientes de desenvolvimento.
+- **Desvantagens**: Não permite comunicação direta com o host ou entre hosts.
+- **Comando de Criação**: `docker network create --driver bridge minha-rede-bridge`
+
+#### 2. Rede Host
+- **Descrição**: Containers compartilham a pilha de rede do host, eliminando o overhead da virtualização da rede.
+- **Casos de Uso**: Quando é necessário acesso direto aos recursos de rede do host para performance otimizada.
+- **Vantagens**: Alta performance, sem overhead de virtualização.
+- **Desvantagens**: Menor isolamento, riscos de conflitos de porta.
+- **Comando de Criação**: `docker run --network host nginx`
+
+#### 3. Rede Overlay
+- **Descrição**: Permite comunicação entre containers em diferentes hosts Docker, geralmente usada em clusters de Docker Swarm.
+- **Casos de Uso**: Aplicações distribuídas que necessitam de comunicação entre múltiplos hosts.
+- **Vantagens**: Suporte a multi-host, permite criptografia de tráfego.
+- **Desvantagens**: Requer configuração de Docker Swarm, maior complexidade.
+- **Comando de Criação**: `docker network create --driver overlay minha-rede-overlay`
+
+#### 4. Rede Macvlan
+- **Descrição**: Atribui um endereço MAC único a cada container, permitindo que eles sejam tratados como dispositivos de rede físicos.
+- **Casos de Uso**: Necessário quando aplicações requerem um endereço MAC próprio na rede física.
+- **Vantagens**: Alta performance, bom isolamento de rede.
+- **Desvantagens**: Configuração mais complexa, pode precisar de ajustes na rede física.
+- **Comando de Criação**: `docker network create -d macvlan --subnet=192.168.1.0/24 --gateway=192.168.1.1 -o parent=eth0 minha-macvlan`
+
+#### 5. Rede None
+- **Descrição**: Desconecta o container de qualquer rede, sem qualquer conectividade de rede.
+- **Casos de Uso**: Testes de isolamento ou containers que não precisam de rede.
+- **Vantagens**: Máximo isolamento de rede.
+- **Desvantagens**: Sem conectividade de rede, não pode se comunicar com outros containers ou redes.
+- **Comando de Criação**: `docker run --network none nginx`
+
+
 ### Conclusão
 
 As redes Docker são uma ferramenta poderosa para gerenciar a comunicação e o isolamento de containers. Compreender os diferentes tipos de redes e como configurá-las, conectar containers, gerenciar a resolução de DNS e implementar medidas de segurança é essencial para criar aplicações Docker robustas e seguras. Ao seguir as práticas recomendadas, você pode garantir que suas redes Docker sejam eficientes, seguras e escaláveis.
-
----
-
-Este artigo cobriu os conceitos fundamentais das redes Docker, incluindo tipos de redes, configuração de redes personalizadas, conexão de containers a diferentes redes, resolução de DNS em containers e segurança em redes Docker. Com essas informações, você pode gerenciar redes Docker de forma eficaz, melhorando a comunicação e a segurança de suas aplicações.
